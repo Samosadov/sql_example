@@ -14,4 +14,15 @@ public class Owner {
         this.address = address;
         this.birthday = birthday;
     }
+
+    @Override
+    public String toString() {
+        return "Owner{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", passport='" + passport + '\'' +
+                ", address='" + address + '\'' +
+                ", birthday='" + birthday + '\'' +
+                '}';
+    }
 }
