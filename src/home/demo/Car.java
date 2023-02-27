@@ -7,6 +7,7 @@ public class Car {
     private String model;
     private int year;
     private String color;
+    private long currentOwner;
 
     public Car(long id, String VIN, String brand, String model, int year, String color) {
         this.id = id;
@@ -17,15 +18,26 @@ public class Car {
         this.color = color;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public long getCurrentOwner() {
+        return currentOwner;
+    }
+
+    public void setCurrentOwner(long currentOwner) {
+        this.currentOwner = currentOwner;
+    }
+
     @Override
     public String toString() {
-        return "Car{" +
-                "id=" + id +
-                ", VIN='" + VIN + '\'' +
-                ", brand='" + brand + '\'' +
-                ", model='" + model + '\'' +
-                ", year=" + year +
-                ", color='" + color + '\'' +
-                '}';
+        return "(" + id +
+                ", '" + VIN + '\'' +
+                ", '" + brand + '\'' +
+                ", '" + model + '\'' +
+                ", " + year +
+                ", '" + color + '\'' +
+                ", " + currentOwner + ')';
     }
 }
