@@ -59,13 +59,12 @@ public class Main {
             resultSet = statement.executeQuery(getQuery());
 
             while (resultSet.next()) {
-                long id = resultSet.getLong(1);
-                String VIN = resultSet.getString("VIN");
+                String first_name = resultSet.getString("first_name");
+                String middle_name = resultSet.getString("middle_name");
+                String last_name = resultSet.getString("last_name");
                 String brand = resultSet.getString("brand");
                 String model = resultSet.getString("model");
-                int year = resultSet.getInt("year");
-                String color = resultSet.getString("color");
-                System.out.printf("%d  %s  %s  %s  %d  %s\n", id, VIN, brand, model, year, color);
+                System.out.printf("%s  %s  %s  %s  %s\n", first_name, middle_name, last_name, brand, model);
             }
         }
         catch (SQLException e) {
@@ -77,7 +76,10 @@ public class Main {
     }
 
     public static String getQuery() {
-        StringBuilder result = new StringBuilder("SELECT * FROM cars;");
+        StringBuilder result = new StringBuilder("SELECT first_name, middle_name, last_name, brand, model\n");
+        result.append("FROM owners JOIN car_ow ON owner_id = owners.id\n");
+        result.append("JOIN cars ON cars.id = car_id\n");
+        result.append("WHERE current_owner = owner_id;");
         
         return result.toString();
     }
