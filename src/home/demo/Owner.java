@@ -1,5 +1,8 @@
 package home.demo;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
 public class Owner {
     long id;
     private String first_name;
@@ -19,7 +22,7 @@ public class Owner {
         this.birthday = birthday;
     }
 	
-	public ArrayList<Owner> generate() {
+	public static ArrayList<Owner> generate(int count) {
 		
 // 		Исходные данные
 		
@@ -56,7 +59,7 @@ public class Owner {
             birthday.append("-");
             birthday.append(new DecimalFormat("00").format(Math.floor(Math.random() * 28 + 1)));
 
-            owners.add(new Owner(i + 1,
+            result.add(new Owner(i + 1,
                     first_names[(int) Math.floor(Math.random() * first_names.length)],
                     middle_names[(int) Math.floor(Math.random() * middle_names.length)],
                     last_names[(int) Math.floor(Math.random() * last_names.length)],

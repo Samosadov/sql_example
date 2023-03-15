@@ -1,5 +1,7 @@
 package home.demo;
 
+import java.util.ArrayList;
+
 public class Car {
     private long id;
     private String VIN;
@@ -30,7 +32,7 @@ public class Car {
         this.currentOwner = currentOwner;
     }
 	
-	public ArrayList<Car> generate(int count) {
+	public static ArrayList<Car> generate(int count) {
 		
 //      Исходные данные
 
@@ -46,7 +48,7 @@ public class Car {
             StringBuilder VIN = new StringBuilder();
             for (int k = 0; k < 17; k++) VIN.append((char) Math.floor(Math.random() * 10 + 48));
 
-            cars.add(new Car(i + 1, VIN.toString(),
+            result.add(new Car(i + 1, VIN.toString(),
                     brands[(int) Math.floor(Math.random() * brands.length)],
                     models[(int) Math.floor(Math.random() * models.length)],
                     year + (int) Math.floor(Math.random() * 10),

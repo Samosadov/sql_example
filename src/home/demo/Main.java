@@ -1,7 +1,6 @@
 package home.demo;
 
 import java.sql.*;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Main {
@@ -16,37 +15,40 @@ public class Main {
 
     public static void createTables(Statement statement) {
         try {
-            statement.execute("CREATE TABLE IF NOT EXIST 'cars' (\n" +
-                    "  'id' INTEGER NOT NULL PRIMARY KEY,\n" +
-                    "  'VIN' VARCHAR(17),\n" +
-                    "  'brand' VARCHAR(20),\n" +
-                    "  'model' VARCHAR(20),\n" +
-                    "  'color' VARCHAR(20),\n" +
-                    "  'year' INTEGER,\n" +
-                    "  current_owner INTEGER);");
+            statement.execute("""
+                    CREATE TABLE IF NOT EXIST 'cars' (
+                      'id' INTEGER NOT NULL PRIMARY KEY,
+                      'VIN' VARCHAR(17),
+                      'brand' VARCHAR(20),
+                      'model' VARCHAR(20),
+                      'color' VARCHAR(20),
+                      'year' INTEGER,
+                      current_owner INTEGER);""");
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         try {
-            statement.execute("CREATE TABLE IF NOT EXIST 'owners' (\n" +
-                    "  'id' INTEGER NOT NULL PRIMARY KEY,\n" +
-                    "  'first_name' VARCHAR(20),\n" +
-                    "  'middle_name' VARCHAR(20),\n" +
-                    "  'last_name' VARCHAR(20),\n" +
-                    "  'passport' VARCHAR(6),\n" +
-                    "  'address' TEXT,\n" +
-                    "  'birthday' DATE);");
+            statement.execute("""
+                    CREATE TABLE IF NOT EXIST 'owners' (
+                      'id' INTEGER NOT NULL PRIMARY KEY,
+                      'first_name' VARCHAR(20),
+                      'middle_name' VARCHAR(20),
+                      'last_name' VARCHAR(20),
+                      'passport' VARCHAR(6),
+                      'address' TEXT,
+                      'birthday' DATE);""");
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         try {
-            statement.execute("CREATE TABLE IF NOT EXIST 'car_ow' (\n" +
-                    "  'car_id' INTEGER NOT NULL,\n" +
-                    "  'owner_id' INTEGER NOT NULL,\n" +
-                    "  FOREIGN KEY ('car_id') REFERENCES 'cars'('id'),\n" +
-                    "  FOREIGN KEY ('owner_id') REFERENCES 'owners'('id'));");
+            statement.execute("""
+                    CREATE TABLE IF NOT EXIST 'car_ow' (
+                      'car_id' INTEGER NOT NULL,
+                      'owner_id' INTEGER NOT NULL,
+                      FOREIGN KEY ('car_id') REFERENCES 'cars'('id'),
+                      FOREIGN KEY ('owner_id') REFERENCES 'owners'('id'));""");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -77,7 +79,7 @@ public class Main {
     public static String getQuery() {
         StringBuilder result = new StringBuilder("SELECT * FROM cars;");
         
-        return result;
+        return result.toString();
     }
 	
 	public static void closeDB() {
@@ -95,15 +97,15 @@ public class Main {
         }
 	}
 	
-	public static generateTables() {
+	public static void generateTables() {
 		
 		// ===================== Генерация машин ==============
         int count = 5;
-        ArrayList<Car> cars = generate(count);
+        ArrayList<Car> cars = Car.generate(count);
 		
 		// ===================== Генерация собственников ==============
         count = 8;
-        ArrayList<Owner> owners = generate(count);
+        ArrayList<Owner> owners = Owner.generate(count);
 
         // ================= Заполнение таблицы cars ==============
 
@@ -145,7 +147,9 @@ public class Main {
         query = new StringBuilder("INSERT INTO 'car_ow' ('car_id', 'owner_id') VALUES ");
         for (Car car : cars) {
             query.append('(');
-            query.append(car.getId() + ", " + car.getCurrentOwner());
+            query.append(car.getId());
+            query.append(", ");
+            query.append(car.getCurrentOwner());
             query.append(')');
             query.append(',');
         }
@@ -157,7 +161,7 @@ public class Main {
             query.append(", ");
 			int tmp = 0;
 			do {
-				tmp = (int) Math.floor(Math.random() * owners.size() + 1;
+				tmp = (int) Math.floor(Math.random() * owners.size() + 1);
 			} while (cars.get(i + 1).getCurrentOwner() == tmp);
             query.append(tmp); // owner_id
             query.append(")");
