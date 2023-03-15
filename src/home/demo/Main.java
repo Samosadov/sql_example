@@ -16,22 +16,7 @@ public class Main {
 
     public static void createTables(Statement statement) {
         try {
-            statement.execute("CREATE TABLE 'cars' (" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "" +
-                    "\n" +
+            statement.execute("CREATE TABLE IF NOT EXIST 'cars' (\n" +
                     "  'id' INTEGER NOT NULL PRIMARY KEY,\n" +
                     "  'VIN' VARCHAR(17),\n" +
                     "  'brand' VARCHAR(20),\n" +
@@ -44,7 +29,7 @@ public class Main {
         }
 
         try {
-            statement.execute("CREATE TABLE 'owners' (\n" +
+            statement.execute("CREATE TABLE IF NOT EXIST 'owners' (\n" +
                     "  'id' INTEGER NOT NULL PRIMARY KEY,\n" +
                     "  'first_name' VARCHAR(20),\n" +
                     "  'middle_name' VARCHAR(20),\n" +
@@ -57,7 +42,7 @@ public class Main {
         }
 
         try {
-            statement.execute("CREATE TABLE 'car_ow' (\n" +
+            statement.execute("CREATE TABLE IF NOT EXIST 'car_ow' (\n" +
                     "  'car_id' INTEGER NOT NULL,\n" +
                     "  'owner_id' INTEGER NOT NULL,\n" +
                     "  FOREIGN KEY ('car_id') REFERENCES 'cars'('id'),\n" +
@@ -69,8 +54,6 @@ public class Main {
 
     public static void selectQuery() {
         try {
-            connection = DriverManager.getConnection(DB_URL, user, pass);
-            statement = connection.createStatement();
             resultSet = statement.executeQuery(getQuery());
 
             while (resultSet.next()) {
@@ -87,93 +70,46 @@ public class Main {
             System.out.println("Error SQL");
         }
         finally {
-            try { connection.close(); } catch (SQLException e) {}
-            try { statement.close(); } catch (SQLException e) {}
-            try { resultSet.close(); } catch (SQLException e) {}
+            closeDB();
         }
     }
 
     public static String getQuery() {
-//        String query = "INSERT INTO 'cars' ('id', 'VIN', 'brand', 'model', 'year', 'color', 'current_owner') VALUES ";
-//        for (Car cars : cars) {query += ""
-        return "";
+        StringBuilder result = new StringBuilder("SELECT * FROM cars;");
+        
+        return result;
     }
+	
+	public static void closeDB() {
+		try { connection.close(); } catch (SQLException e) {}
+        try { statement.close(); } catch (SQLException e) {}
+        try { resultSet.close(); } catch (SQLException e) {}
+	}
 
-    public static void tempGenerator() {
-
-    }
-
-    public static void main(String[] args) {
-        try {
+	public static void connectDB() {
+		try {
             connection = DriverManager.getConnection(DB_URL, user, pass);
             statement = connection.createStatement();
-            createTables(statement); // =========== Создание таблиц =============
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        // ===================== Генерация машин ==============
-
-        String[] first_names = {"Ivan", "Peter", "Sidor", "Alexander"};
-        String[] middle_names = {"Ivanovich", "Petrovich", "Sidorovich", "Alexandrovich"};
-        String[] last_names = {"Ivanov", "Petrov", "Sidorov", "Sokolov"};
-        String[] cities = {"Moskva", "Ivanovo", "Vladimir region, Kovrov"};
-        String[] streets = {"Mohovaya street", "Fridrikha Engelsa street", "The 2nd Line", "Severnyi Trakt", "Lenina street"};
-
-        String[] brands = {"Volvo", "Toyota", "LADA"};
-        String[] models = {"Granta", "Kalina", "Priora"};
-        int year = 2005;
-        String[] colors = {"white", "black", "red", "green"};
-
+	}
+	
+	public static generateTables() {
+		
+		// ===================== Генерация машин ==============
         int count = 5;
-        ArrayList<Car> cars = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            StringBuilder VIN = new StringBuilder();
-            for (int k = 0; k < 17; k++) VIN.append((char) Math.floor(Math.random() * 10 + 48));
-
-            cars.add(new Car(i + 1, VIN.toString(),
-                    brands[(int) Math.floor(Math.random() * brands.length)],
-                    models[(int) Math.floor(Math.random() * models.length)],
-                    year + (int) Math.floor(Math.random() * 10),
-                    colors[(int) Math.floor(Math.random() * colors.length)]));
-        }
-
-//      ===================== Генерация собственников ==============
+        ArrayList<Car> cars = generate(count);
+		
+		// ===================== Генерация собственников ==============
         count = 8;
-        ArrayList<Owner> owners = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-
-            StringBuilder passport = new StringBuilder();
-            passport.append((int) Math.floor(Math.random() * 9000 + 1000));
-            passport.append(" ");
-            passport.append((int) Math.floor(Math.random() * 900000 + 100000));
-
-            StringBuilder address = new StringBuilder();
-            address.append(cities[(int) Math.floor(Math.random() * cities.length)]);
-            address.append(", ");
-            address.append(streets[(int) Math.floor(Math.random() * streets.length)]);
-            address.append(", ");
-            address.append((int) Math.floor(Math.random() * 200 + 1));
-            address.append(", ");
-            address.append((int) Math.floor(Math.random() * 200 + 1));
-
-            StringBuilder birthday = new StringBuilder();
-            birthday.append((int) Math.floor(Math.random() * 55 + 1950));
-            birthday.append("-");
-            birthday.append(new DecimalFormat("00").format(Math.floor(Math.random() * 12 + 1)));
-            birthday.append("-");
-            birthday.append(new DecimalFormat("00").format(Math.floor(Math.random() * 28 + 1)));
-
-            owners.add(new Owner(i + 1,
-                    first_names[(int) Math.floor(Math.random() * first_names.length)],
-                    middle_names[(int) Math.floor(Math.random() * middle_names.length)],
-                    last_names[(int) Math.floor(Math.random() * last_names.length)],
-                    passport.toString(),
-                    address.toString(),
-                    birthday.toString()));
-        }
+        ArrayList<Owner> owners = generate(count);
 
         // ================= Заполнение таблицы cars ==============
+
+		for (Car car : cars) { // Текущие влыдельцы
+			car.setCurrentOwner((int) Math.floor(Math.random() * owners.size() + 1));
+		}
 
         StringBuilder query = new StringBuilder("INSERT INTO 'cars' ('id', 'VIN', 'brand', 'model', 'year', 'color', 'current_owner') VALUES ");
         for (Car car : cars) {
@@ -213,13 +149,17 @@ public class Main {
             query.append(')');
             query.append(',');
         }
-        // Добавить генерацию старых владельцев
+        // Cтарыe владельцы
         count = (int) Math.floor(Math.random() * cars.size() * owners.size() + cars.size());
         for (int i = 0; i < count; i++) {
             query.append("(");
-            query.append((int) Math.floor(Math.random() * cars.size() + 1));
+			query.append(i);  // car_id
             query.append(", ");
-            query.append((int) Math.floor(Math.random() * owners.size() + 1));
+			int tmp = 0;
+			do {
+				tmp = (int) Math.floor(Math.random() * owners.size() + 1;
+			} while (cars.get(i + 1).getCurrentOwner() == tmp);
+            query.append(tmp); // owner_id
             query.append(")");
             query.append((i < count - 1) ? ',' : ';');
         }
@@ -229,9 +169,17 @@ public class Main {
             e.printStackTrace();
         }
 
-        try { connection.close(); } catch (SQLException e) {}
-        try { statement.close(); } catch (SQLException e) {}
-        try { resultSet.close(); } catch (SQLException e) {}
+	}
+
+    public static void main(String[] args) {
+		
+        connectDB(); 
+        createTables(statement); // Создание
+		generateTables(); // Заполнение
+
+		selectQuery();
+
+        closeDB(); // Закрытие БД
     }
 }
 
