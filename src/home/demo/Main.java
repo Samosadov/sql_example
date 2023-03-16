@@ -121,7 +121,7 @@ public class Main {
             query.append(car);
             query.append(',');
         }
-        query.deleteCharAt(query.length());
+        query.deleteCharAt(query.length() - 1);
         query.append(";");
         try {
             statement.execute(query.toString());
@@ -136,7 +136,7 @@ public class Main {
             query.append(owner.toString());
             query.append(',');
         }
-        query.deleteCharAt(query.length());
+        query.deleteCharAt(query.length() - 1);
         query.append(";");
         try {
             statement.execute(query.toString());
@@ -156,15 +156,15 @@ public class Main {
             query.append(',');
         }
         // Cтарыe владельцы
-        count = (int) Math.floor(Math.random() * cars.size() * owners.size() + cars.size());
+        count = cars.size();
         for (int i = 0; i < count; i++) {
             query.append("(");
-			query.append(i);  // car_id
+			query.append(i + 1);  // car_id
             query.append(", ");
 			int tmp = 0;
 			do {
 				tmp = (int) Math.floor(Math.random() * owners.size() + 1);
-			} while (cars.get(i + 1).getCurrentOwner() == tmp);
+			} while (cars.get(i).getCurrentOwner() == tmp);
             query.append(tmp); // owner_id
             query.append(")");
             query.append((i < count - 1) ? ',' : ';');
