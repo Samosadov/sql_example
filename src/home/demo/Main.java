@@ -16,13 +16,13 @@ public class Main {
     public static void createTables(Statement statement) {
         try {
             statement.execute("""
-                    CREATE TABLE IF NOT EXIST 'cars' (
-                      'id' INTEGER NOT NULL PRIMARY KEY,
-                      'VIN' VARCHAR(17),
-                      'brand' VARCHAR(20),
-                      'model' VARCHAR(20),
-                      'color' VARCHAR(20),
-                      'year' INTEGER,
+                    CREATE TABLE IF NOT EXIST cars (
+                      id INTEGER NOT NULL PRIMARY KEY,
+                      VIN VARCHAR(17),
+                      brand VARCHAR(20),
+                      model VARCHAR(20),
+                      color VARCHAR(20),
+                      year INTEGER,
                       current_owner INTEGER);""");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -30,25 +30,25 @@ public class Main {
 
         try {
             statement.execute("""
-                    CREATE TABLE IF NOT EXIST 'owners' (
-                      'id' INTEGER NOT NULL PRIMARY KEY,
-                      'first_name' VARCHAR(20),
-                      'middle_name' VARCHAR(20),
-                      'last_name' VARCHAR(20),
-                      'passport' VARCHAR(6),
-                      'address' TEXT,
-                      'birthday' DATE);""");
+                    CREATE TABLE IF NOT EXIST owners (
+                      id INTEGER NOT NULL PRIMARY KEY,
+                      first_name VARCHAR(20),
+                      middle_name VARCHAR(20),
+                      last_name VARCHAR(20),
+                      passport VARCHAR(6),
+                      address TEXT,
+                      birthday DATE);""");
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         try {
             statement.execute("""
-                    CREATE TABLE IF NOT EXIST 'car_ow' (
-                      'car_id' INTEGER NOT NULL,
-                      'owner_id' INTEGER NOT NULL,
-                      FOREIGN KEY ('car_id') REFERENCES 'cars'('id'),
-                      FOREIGN KEY ('owner_id') REFERENCES 'owners'('id'));""");
+                    CREATE TABLE IF NOT EXIST car_ow (
+                      car_id INTEGER NOT NULL,
+                      owner_id INTEGER NOT NULL,
+                      FOREIGN KEY (car_id) REFERENCES cars(id),
+                      FOREIGN KEY (owner_id) REFERENCES owners(id));""");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -115,7 +115,7 @@ public class Main {
 			car.setCurrentOwner((int) Math.floor(Math.random() * owners.size() + 1));
 		}
 
-        StringBuilder query = new StringBuilder("INSERT INTO 'cars' ('id', 'VIN', 'brand', 'model', 'year', 'color', 'current_owner') VALUES ");
+        StringBuilder query = new StringBuilder("INSERT INTO cars (id, VIN, brand, model, year, color, current_owner) VALUES ");
         for (Car car : cars) {
             car.setCurrentOwner((int) Math.floor(Math.random() * owners.size() + 1));
             query.append(car);
@@ -131,7 +131,7 @@ public class Main {
 
         // ================= Заполнение таблицы owners ==============
 
-        query = new StringBuilder("INSERT INTO 'owners' ('id', 'first_name', 'middle_name', 'last_name', 'passport', 'address', 'birthday') VALUES ");
+        query = new StringBuilder("INSERT INTO owners (id, first_name, middle_name, last_name, passport, address, birthday) VALUES ");
         for (Owner owner : owners) {
             query.append(owner.toString());
             query.append(',');
@@ -146,7 +146,7 @@ public class Main {
 
 //        ===================== Организация связей ==============
 
-        query = new StringBuilder("INSERT INTO 'car_ow' ('car_id', 'owner_id') VALUES ");
+        query = new StringBuilder("INSERT INTO car_ow (car_id, owner_id) VALUES ");
         for (Car car : cars) {
             query.append('(');
             query.append(car.getId());
